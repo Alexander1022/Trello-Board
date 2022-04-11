@@ -87,36 +87,43 @@ function AllBoards()
     }, []);
 
     return (
-      <div className="mb-auto h-screen justify-center bg-sky-600">
+    <div className="h-screen bg-sky-600">
+      <div className="mb-auto h-view justify-center bg-sky-600">
           <div className="p-5 flex flex-col items-center justify-center">
               <h1 className="text-3xl text-white">All Boards</h1>
               <p className="text-white text-lg">Create, Edit or Delete boards</p>
           </div>
 
-          <div className="flex mx-auto p-auto h-view justify-center items-stretch">
-              <form className="flex flex-col bg-white rounded-md text-black justify-items-center p-5 justify-center text-center mr-5">
+          <div className="flex flex-col mx-auto p-auto h-view items-center">
+              <form className="flex flex-col w-min bg-white rounded-md text-black justify-items-center p-5 mb-10 justify-center text-center mr-5">
                   <p className="text-xl mb-5">Create a board</p>
                   <input required className="outline-0 mb-3" type="text" name="board_name" placeholder="Name" value={boardName} onChange={onChangeBoardName}/>
                   <input required className="outline-0 mb-3" type="text" name="board_desc" placeholder="Description" value={boardDescription} onChange={onChangeBoardDescription}/>
                   <input className="cursor-pointer" type="button" value="Submit" onClick={onSubmit}/>
               </form>
 
-              <div className="flex px-4 pb-8 items-start overflow-x-scroll">
-                  {
-                      boards.map((board, index) => (
-                          <div className="flex flex-col bg-white border-2 border-white h-max w-max rounded-md justify-center justify-items-center text-center p-3 m-1" key={index}>
-                          <Link to={"/boards/" + board.id} className="">
-                              <h1 className="font-semibold text-2xl">{board.data.name}</h1>
-                          </Link>
-                            <input className="cursor-pointer text-white bg-red-600 border-2 border-white" type="button" value="Delete board" onClick={() => onDelete(board.id)} />
-                            <Link to={"/boards/" + board.id + "/edit"} className="cursor-pointer text-white bg-green-600 border-2 border-white">
-                                <h1>Edit board</h1>
-                            </Link>
-                          </div>
-                      ))
-                  }
-              </div>
+                <div className="flex items-center justify-center">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
+                    {
+                        boards.map((board, index) => (
+                            <div className="flex flex-col bg-white shadow-2xl h-view rounded-md justify-center justify-items-center text-center p-5 m-3" key={index}>
+                                <Link to={"/boards/" + board.id} className="">
+                                    <h1 className="font-semibold text-2xl">{board.data.name}</h1>
+                                </Link>
+                                
+                                <input className="cursor-pointer text-white bg-red-600 border-2 border-white" type="button" value="Delete" onClick={() => onDelete(board.id)} />
+                                
+                                <Link to={"/boards/" + board.id + "/edit"} className="cursor-pointer text-white bg-green-600 border-2 border-white">
+                                    <h1>Edit</h1>
+                                </Link>
+                            
+                            </div>
+                        ))
+                    }
+                    </div>
+                </div>
           </div>
+      </div>
       </div>
   );
 }
