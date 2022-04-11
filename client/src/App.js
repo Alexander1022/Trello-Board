@@ -28,16 +28,8 @@ function App()
     request.onupgradeneeded = function(event)
     {
         const db = event.target.result;
-        const objectStore = db.createObjectStore("boards", {autoIncrement: true});
-
-        objectStore.createIndex("name", "name", {unique: false});
-        objectStore.createIndex("description", "description", {unique: false});
-        objectStore.createIndex("id", "id", {unique: true});
-
-        const objectStore2 = db.createObjectStore("columns", {autoIncrement: true});
-        objectStore2.createIndex("boardId", "boardId", {unique: false});
-        objectStore2.createIndex("name", "name", {unique: false});
-        objectStore2.createIndex("id", "id", {unique: true});
+        const objectStore = db.createObjectStore("boards", {autoIncrement: true, keyPath: "id"});
+        const objectStore2 = db.createObjectStore("columns", {autoIncrement: true, keyPath: "id"});
     };
 
     if(name === null)

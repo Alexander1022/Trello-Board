@@ -22,13 +22,12 @@ function Board()
             const db = event.target.result;
             const transaction = db.transaction(["boards"], "readonly");
             const objectStore = transaction.objectStore("boards");
-            const r = objectStore.get(parseInt(id) + 1);
+            const r = objectStore.get(parseInt(id));
+            console.log("Getting info for " + id);
 
             r.onsuccess = (event) => {
                 const b = event.target.result;
-                
                 setBoard({name: b.data.name, description: b.data.description})
-                
                 loading.set = false;
             }
         }

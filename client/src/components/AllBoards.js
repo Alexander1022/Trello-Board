@@ -16,7 +16,7 @@ function AllBoards()
             const request = objectStore.getAll();
             request.onsuccess = (event) => {
                 const b = event.target.result;
-                console.log(event.target)
+                console.log(event.target);
                 console.log(b);
                 setBoards(b);
             };
@@ -48,7 +48,7 @@ function AllBoards()
                 description: boardDescription
             };
 
-            store.put({
+            store.add({
                 data
             });
 
@@ -71,8 +71,8 @@ function AllBoards()
         request.onsuccess = function () {
             const db = request.result;
             const transaction = db.transaction("boards", "readwrite");
-            const req = transaction.objectStore("boards").delete(parseInt(index)+1);
-            console.log("Success");
+            const req = transaction.objectStore("boards").delete(index);
+            console.log("Board deleted - " + index);
             getBoards();
         }
 
@@ -105,14 +105,13 @@ function AllBoards()
                   {
                       boards.map((board, index) => (
                           <div className="flex flex-col bg-white border-2 border-white h-max w-max rounded-md justify-center justify-items-center text-center p-3 m-1" key={index}>
-                          <Link to={"/boards/" + index} className="">
+                          <Link to={"/boards/" + board.id} className="">
                               <h1 className="font-semibold text-2xl">{board.data.name}</h1>
                           </Link>
-                            <input className="cursor-pointer text-white bg-red-600 border-2 border-white" type="button" value="Delete board" onClick={() => onDelete(index)} />
-                            <Link to={"/boards/" + index + "/edit"} className="cursor-pointer text-white bg-green-600 border-2 border-white">
+                            <input className="cursor-pointer text-white bg-red-600 border-2 border-white" type="button" value="Delete board" onClick={() => onDelete(board.id)} />
+                            <Link to={"/boards/" + board.id + "/edit"} className="cursor-pointer text-white bg-green-600 border-2 border-white">
                                 <h1>Edit board</h1>
                             </Link>
-
                           </div>
                       ))
                   }

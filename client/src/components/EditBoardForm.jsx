@@ -8,6 +8,8 @@ function EditBoard({name, desc, index})
     const [boardDescription, setBoardDescription] = useState("");
     const { id } = useParams(); 
 
+    console.log("Edit id: " + id);
+
     const onChangeName = (e) => {
         setBoardName(e.target.value);
     };
@@ -18,11 +20,29 @@ function EditBoard({name, desc, index})
 
     const onSubmit = (e) => {
         e.preventDefault();
-        const board = {
-            name: boardName,
-            desc: boardDescription
+        
+        // stupid way to update object from objectStore :D
+         
+        const newBoard = {
+            data: {
+                name: boardName,
+                description: boardDescription
+            },
+            id: parseInt(id)
+    };
+        const request = indexedDB.open("trello", 1);
+
+        request.onsuccess = function () {
+            const db = request.result;
+            const transaction = db.transaction("boards", "readwrite");
+            const req = transaction.objectStore("boards").put(newBoard);
+            console.log("Done");
+        }
+
+        request.onerror = () =>
+        {
+            console.log("Error deleting board");
         };
-        console.log(board);
     };
 
     return (
