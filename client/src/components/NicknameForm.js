@@ -18,11 +18,11 @@ function NicknameForm()
     }
 
     return (
-        <div>
-            <form>
-                <h2>Please enter your nickname</h2>
-                <input type="text" name="nickname" placeholder="Enter your nickname" value={nickname} onChange={onChange}/>
-                <input type="button" value="Submit" onClick={onSubmit}/>
+        <div className="mb-auto h-screen justify-center bg-sky-600">
+        <form className="flex flex-col text-center text-white p-10 justify-center justify-items-center">
+                <h2 className="text-2xl m-5 font-bold">Please enter your nickname</h2>
+                <input type="text" name="nickname" placeholder="Enter your nickname" className="outline-0 border-2 border-black text-black" value={nickname} onChange={onChange}/>
+                <input type="button" value="Submit" className="m-5 cursor-pointer" onClick={onSubmit}/>
             </form>
     </div>)
 }

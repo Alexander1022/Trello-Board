@@ -5,6 +5,7 @@ import Home from "./components/Home";
 import AllBoards from "./components/AllBoards";
 import Board from "./components/Board";
 import NicknameForm from "./components/NicknameForm";
+import EditBoard from './components/EditBoardForm';
 
 
 function App()
@@ -52,6 +53,7 @@ function App()
                     <Route exact path="/" element={<Home nickname={name}/>} />
                     <Route exact path="/boards" element={<AllBoards />} />
                     <Route path="/boards/:id" element={<Board/>} />
+                    <Route path="/boards/:id/edit" element={<EditBoard/>} />
                 </Routes>
             </BrowserRouter>
         </div>

@@ -15,9 +15,10 @@ function AllBoards()
             const objectStore = transaction.objectStore("boards");
             const request = objectStore.getAll();
             request.onsuccess = (event) => {
-                const boards = event.target.result;
-                setBoards(boards);
-                console.log(boards);
+                const b = event.target.result;
+                console.log(event.target)
+                console.log(b);
+                setBoards(b);
             };
         };
     }
@@ -55,6 +56,7 @@ function AllBoards()
             setBoardDescription("");
 
             console.log("Success");
+            getBoards();
         }
 
         request.onerror = () =>
@@ -69,9 +71,9 @@ function AllBoards()
         request.onsuccess = function () {
             const db = request.result;
             const transaction = db.transaction("boards", "readwrite");
-            const req = transaction.objectStore("boards").delete(index+1);
-
+            const req = transaction.objectStore("boards").delete(parseInt(index)+1);
             console.log("Success");
+            getBoards();
         }
 
         request.onerror = () =>
@@ -102,13 +104,16 @@ function AllBoards()
               <div className="flex px-4 pb-8 items-start overflow-x-scroll">
                   {
                       boards.map((board, index) => (
-
-                          <>
-                          <Link to={"/boards/" + index} className="bg-white border-2 border-white h-max w-max rounded-md justify-center justify-items-center text-center p-3 m-1" key={index}>
+                          <div className="flex flex-col bg-white border-2 border-white h-max w-max rounded-md justify-center justify-items-center text-center p-3 m-1" key={index}>
+                          <Link to={"/boards/" + index} className="">
                               <h1 className="font-semibold text-2xl">{board.data.name}</h1>
                           </Link>
-                          <input className="cursor-pointer" type="button" value="Delete board" onClick={() => onDelete(index)} />
-                          </>
+                            <input className="cursor-pointer text-white bg-red-600 border-2 border-white" type="button" value="Delete board" onClick={() => onDelete(index)} />
+                            <Link to={"/boards/" + index + "/edit"} className="cursor-pointer text-white bg-green-600 border-2 border-white">
+                                <h1>Edit board</h1>
+                            </Link>
+
+                          </div>
                       ))
                   }
               </div>
