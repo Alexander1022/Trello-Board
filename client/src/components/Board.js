@@ -4,7 +4,17 @@ import {useParams} from "react-router-dom";
 function Board()
 {
     const { id } = useParams();
-    const [board, setBoard] = useState([]);
+    const loading = {
+        isLoading: false,
+
+        get get() {
+            return this.isLoading;
+        },
+        set set(value) {
+            this.isLoading = value;
+        }
+    }
+    const [board, setBoard] = useState({name:'', description:''})
 
     const getBoardInfo = () => {
         const request = indexedDB.open("trello", 1);
@@ -15,30 +25,38 @@ function Board()
             const r = objectStore.get(parseInt(id) + 1);
 
             r.onsuccess = (event) => {
-                const board = event.target.result;
-                setBoard(board);
-                console.log("board: ", board);
+                const b = event.target.result;
+                
+                setBoard({name: b.data.name, description: b.data.description})
+                
+                loading.set = false;
             }
         }
     };
 
     useEffect(() => {
+        loading.set = true;
         getBoardInfo();
-        console.log(board);
     }, []);
 
-    return(
+    return(!loading ? 
         <div className="mb-auto h-screen justify-center bg-sky-600">
             <div className="p-5 flex flex-col items-center justify-center">
-                <h1 className="text-3xl text-white font-semibold">{}</h1>
-                <p className="text-white text-lg">Desc</p>
+                <h1 className="text-3xl text-white font-semibold">Loading...</h1>
+            </div>
+        </div>
+        :
+        <div className="mb-auto h-screen justify-center bg-sky-600">
+            <div className="p-5 flex flex-col items-center justify-center">
+                <h1 className="text-3xl text-white font-semibold">Name: {board.name}</h1>
+                <p className="text-white text-lg">Description: {board.description}</p>
             </div>
 
             <div className="flex mx-auto p-auto h-view justify-center items-stretch">
 
             </div>
         </div>
-    );
+    );    
 }
 
 export default Board;

@@ -17,6 +17,7 @@ function AllBoards()
             request.onsuccess = (event) => {
                 const boards = event.target.result;
                 setBoards(boards);
+                console.log(boards);
             };
         };
     }
@@ -31,6 +32,10 @@ function AllBoards()
 
     const onSubmit = (e) => {
         e.preventDefault();
+        if(e.target.boardName == '' || e.target.boardDescription == '') {
+            console.warn("fields are empty")
+            return null;
+        }
         const request = indexedDB.open("trello", 1);
 
         request.onsuccess = function () {
@@ -58,6 +63,23 @@ function AllBoards()
         };
     }
 
+    const onDelete = (index) => {
+        const request = indexedDB.open("trello", 1);
+
+        request.onsuccess = function () {
+            const db = request.result;
+            const transaction = db.transaction("boards", "readwrite");
+            const req = transaction.objectStore("boards").delete(index+1);
+
+            console.log("Success");
+        }
+
+        request.onerror = () =>
+        {
+            console.log("Error deleting board");
+        };
+    }
+
     useEffect(() => {
        getBoards();
     }, []);
@@ -81,10 +103,12 @@ function AllBoards()
                   {
                       boards.map((board, index) => (
 
+                          <>
                           <Link to={"/boards/" + index} className="bg-white border-2 border-white h-max w-max rounded-md justify-center justify-items-center text-center p-3 m-1" key={index}>
                               <h1 className="font-semibold text-2xl">{board.data.name}</h1>
-                              <p className="text-md">{board.data.description}</p>
                           </Link>
+                          <input className="cursor-pointer" type="button" value="Delete board" onClick={() => onDelete(index)} />
+                          </>
                       ))
                   }
               </div>
