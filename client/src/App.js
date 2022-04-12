@@ -30,6 +30,7 @@ function App()
         const db = event.target.result;
         const objectStore = db.createObjectStore("boards", {autoIncrement: true, keyPath: "id"});
         const objectStore2 = db.createObjectStore("columns", {autoIncrement: true, keyPath: "id"});
+        const objectStore3 = db.createObjectStore("tasks", {autoIncrement: true, keyPath: "id"});
     };
 
     if(name === null)

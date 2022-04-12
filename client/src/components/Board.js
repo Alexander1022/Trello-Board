@@ -16,10 +16,12 @@ function Board()
     }
     const [board, setBoard] = useState({name:'', description:''});
     const [cols, setCols] = useState([]);
+    const [tasks, setTasks] = useState([]);
     const [colName, setColName] = useState('');
     const [hidden, setHidden] = useState(true);
     const [colToEdit, setColToEdit] = useState(0);
     const [editedName, setEditedName] = useState('');
+    const [taskName, setTaskName] = useState('');
     
     const getBoardInfo = () => {
         const request = openDb();
@@ -32,6 +34,7 @@ function Board()
                 const b = event.target.result;
                 setBoard({name: b.data.name, description: b.data.description})
                 getColumns();
+                getTasks();
             }
         }
     };
@@ -53,6 +56,27 @@ function Board()
                 }
 
                 setCols(cols);
+            }
+        }
+    }
+
+    const getTasks = () => {
+        const request = openDb();
+        request.onsuccess = function() {
+            const db = request.result;
+            const objectStore = getObjectStore(db, "tasks", "readonly")
+            const r = objectStore.getAll();
+
+            r.onsuccess = (event) => {
+                const t = event.target.result;
+
+                var tasks = [];
+                for(let i = 0; i < t.length; i++) {
+                    if(t[i].data.boardId === parseInt(id))
+                        tasks.push(t[i])
+                }
+
+                setTasks(tasks);
                 loading.set = false;
             }
         }
@@ -131,6 +155,29 @@ function Board()
         getColumns();
     }
 
+    const createTask = (e, colId) => {
+        if(e.which == 13) {
+            const request = openDb();
+            request.onsuccess = function () {
+                const db = request.result;
+                const objectStore = getObjectStore(db, "tasks", "readwrite")
+                
+                const data = {
+                    name: taskName,
+                    boardId: parseInt(id),
+                    columnId: colId,
+                    timestamp: Date.now()
+                };
+                objectStore.add({
+                    data
+                });
+
+                setTaskName('');
+                getTasks();
+            }
+        }
+    }
+
     const openDb = () => {
         return indexedDB.open("trello", 1);
     }
@@ -167,18 +214,20 @@ function Board()
                             </div>
 
                             <div className="text-sm mt-2">
-                                <div className="bg-white p-2 rounded mt-1 border-b border-grey cursor-pointer hover:bg-gray-100">
-                                    To do 1
-                                </div>
-                                
-                                <div className="bg-white p-2 rounded mt-1 border-b border-grey cursor-pointer hover:bg-gray-100">
-                                    To do 2
-                                </div>
-                                
-                                <div className="bg-white p-2 rounded mt-1 border-b border-grey cursor-pointer hover:bg-gray-100">
-                                    To do 3
-                                </div>
-                                <input className="mt-3 text-gray-600 bg-gray-300 outline-0" placeholder="Add a task..."/>
+                                {
+                                    tasks.map((task, index) => (
+                                        <div>
+                                            { (task.data.columnId === col.id) ? 
+                                                <div className="bg-white p-2 rounded mt-1 border-b border-grey cursor-pointer hover:bg-gray-100">
+                                                    {task.data.name}
+                                                </div>
+                                                :
+                                                <div></div>
+                                            }
+                                        </div>
+                                    ))
+                                }
+                                <input className="mt-3 text-gray-600 bg-gray-300 outline-0" placeholder="Add a task..." value={taskName} onChange={(e) => { setTaskName(e.target.value) }} onKeyUp={(e) => createTask(e, col.id)}/>
                                 <input className="cursor-pointer text-white bg-red-600 border-2 border-white" type="button" value="Delete" onClick={() => onDelete(col.id)} />
                                 <input className="cursor-pointer text-white bg-green-600 border-2 border-white" type="button" value="Edit" onClick={() => openEdit(col.id)} />
                             </div>

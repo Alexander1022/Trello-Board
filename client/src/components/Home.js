@@ -4,7 +4,6 @@ import Column from "./Column";
 function Home(props)
 {
     const data = localStorage.getItem(props.board_name);
-    const board = JSON.parse(data);
 
     return (
         <div className="mb-auto h-screen justify-center bg-sky-600">
