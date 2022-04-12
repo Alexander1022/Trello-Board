@@ -8,27 +8,17 @@ function AllBoards()
     const [boards, setBoards] = useState([]);
 
     const getBoards = () => {
-        const request = indexedDB.open("trello", 1);
-        request.onsuccess = (event) => {
-            const db = event.target.result;
-            const transaction = db.transaction(["boards"], "readonly");
-            const objectStore = transaction.objectStore("boards");
+        const request = openDb();
+        request.onsuccess = (e) => {
+            const db = e.target.result;
+            const objectStore = getObjectStore(db, "boards", "readonly");
+            
             const request = objectStore.getAll();
             request.onsuccess = (event) => {
                 const b = event.target.result;
-                console.log(event.target);
-                console.log(b);
                 setBoards(b);
             };
         };
-    }
-
-    const onChangeBoardName = (e) => {
-        setBoardName(e.target.value);
-    }
-
-    const onChangeBoardDescription = (e) => {
-        setBoardDescription(e.target.value);
     }
 
     const onSubmit = (e) => {
@@ -37,50 +27,53 @@ function AllBoards()
             console.warn("fields are empty")
             return null;
         }
-        const request = indexedDB.open("trello", 1);
 
+        const request = openDb();
         request.onsuccess = function () {
             const db = request.result;
-            const transaction = db.transaction("boards", "readwrite");
-            const store = transaction.objectStore("boards");
-            const data = {
-                name: boardName,
-                description: boardDescription
-            };
+            const store = getObjectStore(db, "boards", "readwrite");
 
             store.add({
-                data
+                data : {
+                    name: boardName,
+                    description: boardDescription
+                }
             });
 
             setBoardName("");
             setBoardDescription("");
-
-            console.log("Success");
-            getBoards();
         }
 
         request.onerror = () =>
         {
             console.log("Error adding board");
         };
+        
+        getBoards();
     }
 
     const onDelete = (index) => {
-        const request = indexedDB.open("trello", 1);
-
+        const request = openDb();
         request.onsuccess = function () {
             const db = request.result;
-            const transaction = db.transaction("boards", "readwrite");
-            console.log(index)
-            const req = transaction.objectStore("boards").delete(index);
-            console.log("Board deleted - " + index);
-            getBoards();
+            getObjectStore(db, "boards", "readwrite").delete(index);
         }
 
         request.onerror = () =>
         {
             console.log("Error deleting board");
         };
+
+        getBoards();
+    }
+
+    const openDb = () => {
+        return indexedDB.open("trello", 1);
+    }
+
+    const getObjectStore = (db, store, mode) => {
+        const transaction = db.transaction(store, mode);
+        return transaction.objectStore(store);
     }
 
     useEffect(() => {
@@ -98,8 +91,8 @@ function AllBoards()
           <div className="flex flex-col mx-auto p-auto h-view items-center">
               <form className="flex flex-col w-min bg-white rounded-md text-black justify-items-center p-5 mb-10 justify-center text-center mr-5">
                   <p className="text-xl mb-5">Create a board</p>
-                  <input required className="outline-0 mb-3" type="text" name="board_name" placeholder="Name" value={boardName} onChange={onChangeBoardName}/>
-                  <input required className="outline-0 mb-3" type="text" name="board_desc" placeholder="Description" value={boardDescription} onChange={onChangeBoardDescription}/>
+                  <input required className="outline-0 mb-3" type="text" name="board_name" placeholder="Name" value={boardName} onChange={(e) => { setBoardName(e.target.value); }}/>
+                  <input required className="outline-0 mb-3" type="text" name="board_desc" placeholder="Description" value={boardDescription} onChange={(e) => { setBoardDescription(e.target.value); }}/>
                   <input className="cursor-pointer" type="button" value="Submit" onClick={onSubmit}/>
               </form>
 
