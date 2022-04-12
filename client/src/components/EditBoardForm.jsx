@@ -30,7 +30,7 @@ function EditBoard({name, desc, index})
                 description: boardDescription
             },
             id: parseInt(id)
-    };
+        };
         const request = indexedDB.open("trello", 1);
 
         request.onsuccess = function () {

@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {useParams, useNavigate} from "react-router-dom";
 
 function Board()
 {
     const { id } = useParams();
+    let navigate = useNavigate(); 
     const loading = {
         isLoading: false,
 
@@ -17,6 +18,9 @@ function Board()
     const [board, setBoard] = useState({name:'', description:''});
     const [cols, setCols] = useState([]);
     const [colName, setColName] = useState('');
+    const [editedName, setEditedName] = useState('');
+    const [hidden, setHidden] = useState(true);
+    const [colToEdit, setColToEdit] = useState(0);
 
     const getBoardInfo = () => {
         const request = indexedDB.open("trello", 1);
@@ -40,7 +44,6 @@ function Board()
             const db = event.target.result;
             const transaction = db.transaction(["columns"], "readonly");
             const objectStore = transaction.objectStore("columns");
-            console.log(parseInt(id));
             const r = objectStore.getAll();
             console.log("Getting columns for " + parseInt(id));
 
@@ -92,6 +95,64 @@ function Board()
         }
     }
 
+    const onDelete = (index) => {
+        const request = indexedDB.open("trello", 1);
+
+        request.onsuccess = function () {
+            const db = request.result;
+            const transaction = db.transaction("columns", "readwrite");
+            console.log(index)
+            const req = transaction.objectStore("columns").delete(index);
+            console.log("Column deleted - " + index);
+            getColumns();
+        }
+
+        request.onerror = () =>
+        {
+            console.log("Error deleting column");
+        };
+
+        getColumns();
+    }
+
+    const openEdit = (id) => {
+        setHidden(!hidden);
+        setColToEdit(id);
+    }
+    const edit = (e) => {
+        setEditedName(e.target.value)
+    }
+    const submitEdit = (e) => {
+        e.preventDefault();
+        
+        // stupid way to update object from objectStore :D
+         
+        const newCol = {
+            data: {
+                boardId: parseInt(id),
+                name: editedName
+            },
+            id: cols.find(element => element.id === colToEdit).id
+        };
+        const request = indexedDB.open("trello", 1);
+
+        request.onsuccess = function () {
+            const db = request.result;
+            const transaction = db.transaction("columns", "readwrite");
+            const req = transaction.objectStore("columns").put(newCol);
+            console.log("Done");
+            setEditedName('');
+        }
+
+        request.onerror = () =>
+        {
+            console.log("Error updating the column");
+        };
+
+        setHidden(!hidden);
+        getColumns();
+    }
+
     useEffect(() => {
         loading.set = true;
         getBoardInfo();
@@ -131,6 +192,8 @@ function Board()
                                     To do 3
                                 </div>
                                 <input class="mt-3 text-gray-600 bg-gray-300 outline-0" placeholder="Add a task..."/>
+                                <input className="cursor-pointer text-white bg-red-600 border-2 border-white" type="button" value="Delete" onClick={() => onDelete(col.id)} />
+                                <input className="cursor-pointer text-white bg-green-600 border-2 border-white" type="button" value="Edit" onClick={() => openEdit(col.id)} />
                             </div>
                         </div> 
                         ))    
@@ -142,6 +205,20 @@ function Board()
                   <input className="cursor-pointer" type="button" value="Submit" onClick={onSubmit}/>
               </form>
             </div>
+            
+            { !hidden ? 
+            <div className="mb-auto h-screen justify-center bg-sky-600">
+                <form className="flex flex-col text-center text-white p-10 justify-center justify-items-center">
+                    <h2 className="text-2xl m-5 font-bold">Edit the column {cols.find(element => element.id === colToEdit).id}</h2>
+                    <input type="text" name="name" placeholder="New Name" className="p-3 my-1 outline-0 border-2 border-black text-black" value={editedName} onChange={edit}/>
+                    <div className="flex flex-row justify-items-center">
+                        <input type="button" value="Submit" className="m-5 cursor-pointer" onClick={submitEdit}/>
+                        <input type="button" value="Close" className="m-5 cursor-pointer" onClick={() => { setHidden(!hidden) }}/>
+                    </div>
+                </form>
+            </div>
+            :
+            <div></div> }
         </div>
     );    
 }
