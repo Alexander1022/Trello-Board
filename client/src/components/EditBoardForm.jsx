@@ -1,14 +1,15 @@
 import React from "react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 function EditBoard({name, desc, index})
 {
     const [boardName, setBoardName] = useState("");
     const [boardDescription, setBoardDescription] = useState("");
-    const { id } = useParams(); 
+    const { id } = useParams();
+    let navigate = useNavigate(); 
 
-    console.log("Edit id: " + id);
+    //console.log("Edit id: " + id);
 
     const onChangeName = (e) => {
         setBoardName(e.target.value);
@@ -43,6 +44,8 @@ function EditBoard({name, desc, index})
         {
             console.log("Error deleting board");
         };
+
+        navigate("/boards")
     };
 
     return (

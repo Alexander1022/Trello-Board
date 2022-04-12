@@ -33,7 +33,7 @@ function AllBoards()
 
     const onSubmit = (e) => {
         e.preventDefault();
-        if(e.target.boardName == '' || e.target.boardDescription == '') {
+        if(boardName === '' || boardDescription === '') {
             console.warn("fields are empty")
             return null;
         }
@@ -71,6 +71,7 @@ function AllBoards()
         request.onsuccess = function () {
             const db = request.result;
             const transaction = db.transaction("boards", "readwrite");
+            console.log(index)
             const req = transaction.objectStore("boards").delete(index);
             console.log("Board deleted - " + index);
             getBoards();
