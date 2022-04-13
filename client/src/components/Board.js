@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, Fragment} from "react";
 import {useParams, useNavigate} from "react-router-dom";
+import { Transition } from '@headlessui/react';
 
 function Board()
 {
@@ -14,6 +15,8 @@ function Board()
             this.isLoading = value;
         }
     }
+    const [isShowing, setIsShowing] = useState(true)
+
     const [board, setBoard] = useState({name:'', description:''});
     const [cols, setCols] = useState([]);
     const [tasks, setTasks] = useState([]);
@@ -208,6 +211,16 @@ function Board()
             <div className="flex px-4 pt-10 pb-8 items-start overflow-x-scroll">
                     {
                         cols.map((col, index) => (
+                        <Transition
+                            as={Fragment}
+                            show={isShowing}
+                            enter="transition-opacity ease-linear duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="transition-opacity ease-linear duration-300"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
                         <div className="rounded bg-gray-300 flex-no-shrink w-64 p-2 mr-3">
                             <div className="flex justify-between py-1">
                                 <h3 className="text-sm">{col.data.name}</h3>
@@ -218,7 +231,7 @@ function Board()
                                     tasks.map((task, index) => (
                                         <div>
                                             { (task.data.columnId === col.id) ? 
-                                                <div className="bg-white p-2 rounded mt-1 border-b border-grey cursor-pointer hover:bg-gray-100">
+                                                <div  key={index} className="bg-white p-2 rounded mt-1 border-b border-grey cursor-pointer hover:bg-gray-100">
                                                     {task.data.name}
                                                 </div>
                                                 :
@@ -232,6 +245,7 @@ function Board()
                                 <input className="cursor-pointer text-white bg-green-600 border-2 border-white" type="button" value="Edit" onClick={() => openEdit(col.id)} />
                             </div>
                         </div> 
+                        </Transition>
                         ))    
                     }
 
