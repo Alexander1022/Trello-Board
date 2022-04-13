@@ -6,7 +6,7 @@ import AllBoards from "./components/AllBoards";
 import Board from "./components/Board";
 import NicknameForm from "./components/NicknameForm";
 import EditBoard from './components/EditBoardForm';
-
+import EditTask from "./components/EditTask";
 
 function App()
 {
@@ -47,6 +47,7 @@ function App()
                     <Route exact path="/boards" element={<AllBoards />} />
                     <Route path="/boards/:id" element={<Board/>} />
                     <Route path="/boards/:id/edit" element={<EditBoard/>} />
+                    <Route path="/boards/:id/tasks/:taskId/edit" element={<EditTask/>} />
                 </Routes>
             </BrowserRouter>
         </div>

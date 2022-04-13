@@ -1,6 +1,9 @@
 import React, {useEffect, useState, Fragment} from "react";
-import {useParams, useNavigate} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import { Transition } from '@headlessui/react';
+import { useNavigate } from "react-router-dom";
+
+
 
 function Board()
 {
@@ -16,7 +19,7 @@ function Board()
         }
     }
     const [isShowing, setIsShowing] = useState(true)
-
+    const navigate = useNavigate();
     const [board, setBoard] = useState({name:'', description:''});
     const [cols, setCols] = useState([]);
     const [tasks, setTasks] = useState([]);
@@ -25,7 +28,7 @@ function Board()
     const [colToEdit, setColToEdit] = useState(0);
     const [editedName, setEditedName] = useState('');
     const [taskName, setTaskName] = useState('');
-    
+
     const getBoardInfo = () => {
         const request = openDb();
         request.onsuccess = function() {
@@ -231,7 +234,11 @@ function Board()
                                     tasks.map((task, index) => (
                                         <div>
                                             { (task.data.columnId === col.id) ? 
-                                                <div  key={index} className="bg-white p-2 rounded mt-1 border-b border-grey cursor-pointer hover:bg-gray-100">
+                                                <div
+                                                    key={index}
+                                                    className="bg-white p-2 rounded mt-1 border-b border-grey cursor-pointer hover:bg-gray-100"
+                                                    onClick={() => navigate(`/boards/${id}/tasks/${task.id}/edit`)}
+                                                >
                                                     {task.data.name}
                                                 </div>
                                                 :
