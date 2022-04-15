@@ -3,8 +3,6 @@ import {useParams} from "react-router-dom";
 import { Transition } from '@headlessui/react';
 import { useNavigate } from "react-router-dom";
 
-
-
 function Board()
 {
     const { id } = useParams();
@@ -28,6 +26,7 @@ function Board()
     const [colToEdit, setColToEdit] = useState(0);
     const [editedName, setEditedName] = useState('');
     const [taskName, setTaskName] = useState('');
+
 
     const getBoardInfo = () => {
         const request = openDb();
@@ -211,6 +210,14 @@ function Board()
                 <p className="text-white text-lg">Description: {board.description}</p>
             </div>
 
+            <div className="flex m-auto p-auto justify-center justify-items-center">
+                <form className="flex flex-col w-72 bg-white rounded-md shadow-2xl text-black justify-items-center p-5 mb-10 justify-center text-center mr-5">
+                    <p className="text-xl mb-5">Add a new column</p>
+                    <input required className="outline-0 mb-3" type="text" name="column_name" placeholder="Name" value={colName} onChange={(e) => { setColName(e.target.value) }}/>
+                    <input className="cursor-pointer" type="button" value="Submit" onClick={onSubmit}/>
+                </form>
+            </div>
+
             <div className="flex px-4 pt-10 pb-8 items-start overflow-x-scroll">
                     {
                         cols.map((col, index) => (
@@ -224,8 +231,8 @@ function Board()
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
                         >
-                        <div className="rounded bg-gray-300 flex-no-shrink w-64 p-2 mr-3">
-                            <div className="flex justify-between py-1">
+                        <div className="rounded bg-gray-200 flex-no-shrink w-72 p-2 mr-3">
+                            <div className="grid grid-span-4 relative justify-between py-1">
                                 <h3 className="text-sm">{col.data.name}</h3>
                             </div>
 
@@ -247,20 +254,14 @@ function Board()
                                         </div>
                                     ))
                                 }
-                                <input className="mt-3 text-gray-600 bg-gray-300 outline-0" placeholder="Add a task..." value={taskName} onChange={(e) => { setTaskName(e.target.value) }} onKeyUp={(e) => createTask(e, col.id)}/>
-                                <input className="cursor-pointer text-white bg-red-600 border-2 border-white" type="button" value="Delete" onClick={() => onDelete(col.id)} />
-                                <input className="cursor-pointer text-white bg-green-600 border-2 border-white" type="button" value="Edit" onClick={() => openEdit(col.id)} />
+                                <input className="mt-3 text-gray-600 bg-gray-200 outline-0" placeholder="Add a task..." value={taskName} onChange={(e) => { setTaskName(e.target.value) }} onKeyUp={(e) => createTask(e, col.id)}/>
+                                <input className="p-1 cursor-pointer rounded-md text-white bg-red-600" type="button" value="Delete" onClick={() => onDelete(col.id)} />
+                                <input className="p-1 cursor-pointer rounded-md text-white bg-green-600" type="button" value="Edit" onClick={() => openEdit(col.id)} />
                             </div>
                         </div> 
                         </Transition>
                         ))    
                     }
-
-                <form className="flex flex-col w-min bg-white rounded-md text-black justify-items-center p-5 mb-10 justify-center text-center mr-5">
-                  <p className="text-xl mb-5">Add a new column</p>
-                  <input required className="outline-0 mb-3" type="text" name="column_name" placeholder="Name" value={colName} onChange={(e) => { setColName(e.target.value) }}/>
-                  <input className="cursor-pointer" type="button" value="Submit" onClick={onSubmit}/>
-              </form>
             </div>
             
             { !hidden ? 

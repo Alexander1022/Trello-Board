@@ -4,6 +4,7 @@ import {Dialog} from "@headlessui/react";
 import {Transition} from "@headlessui/react";
 import {Fragment} from "react";
 import {useNavigate, useParams} from 'react-router-dom'
+import { Disclosure } from '@headlessui/react'
 
 function EditTask()
 {
@@ -12,6 +13,7 @@ function EditTask()
     const [taskName, setTaskName] = useState("");
     const [taskTime, setTaskTime] = useState("");
     const [newName , setNewName] = useState("");
+    const [cols, setCols] = useState([]);
 
     const navigate = useNavigate();
 
@@ -33,6 +35,19 @@ function EditTask()
                 const task = event.target.result;
                 setTaskName(task.data.name);
                 setTaskTime(new Date(task.data.timestamp).toLocaleTimeString());
+            }
+        }
+    }
+
+    const getColumns = () => {
+        openDb().onsuccess = (event) => {
+            const db = event.target.result;
+            const transaction = db.transaction(["columns"], "readonly");
+            const objectStore = transaction.objectStore("columns");
+            const request = objectStore.getAll();
+            request.onsuccess = (event) => {
+                const cols = event.target.result;
+                setCols(cols);
             }
         }
     }
@@ -65,6 +80,34 @@ function EditTask()
         }
     }
 
+    const moveToColumn = (coldId) => {
+        openDb().onsuccess = (event) => {
+            const db = event.target.result;
+            const transaction = db.transaction(["tasks"], "readwrite");
+            const objectStore = transaction.objectStore("tasks");
+            const request = objectStore.get(parseInt(taskId));
+
+            request.onsuccess = (event) => {
+                const task = event.target.result;
+
+                const editedTask = {
+                    id: task.id,
+                    data: {
+                        name: task.data.name,
+                        timestamp: task.data.timestamp,
+                        boardId: task.data.boardId,
+                        columnId: coldId
+                    }
+                }
+
+                const requestUpdate = objectStore.put(editedTask);
+                requestUpdate.onsuccess = (event) => {
+                    navigate("/boards/" + id);
+                }
+            }
+        }
+    }
+
     const deleteTask = () => {
         openDb().onsuccess = (event) => {
             const db = event.target.result;
@@ -80,6 +123,7 @@ function EditTask()
 
     useState(() => {
         getTask();
+        getColumns();
     }, []);
 
 
@@ -135,7 +179,7 @@ function EditTask()
                                     <input type="text" placeholder="New Name" className="outline-0 mt-5 focus:border-b-2 focus:border-b-sky-400 transition ease-in-out duration-200" onChange={onChangeName}/>
                                 </div>
 
-                                <div className="mt-4 justify-items-stretch">
+                                <div className="mt-4 justify-items-stretch justify-between">
                                     <button
                                         type="button"
                                         className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
@@ -151,6 +195,40 @@ function EditTask()
                                     >
                                         Delete
                                     </button>
+
+                                    <Disclosure>
+                                        <Disclosure.Button className="px-4 py-2 rounded-md bg-emerald-100 text-emerald-900 hover:bg-emerald-200">
+                                            Move to
+                                        </Disclosure.Button>
+
+                                        <Disclosure.Panel className="text-gray-500">
+                                            {
+                                                cols.map((col, index) => (
+                                                    <button
+                                                        key={index}
+                                                        type="button"
+                                                        className="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-900 bg-gray-100 border border-transparent rounded-md hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                                                        onClick={() => moveToColumn(col.id)}
+                                                    >
+                                                        {col.data.name}
+                                                    </button>
+                                                ))
+                                            }
+                                        </Disclosure.Panel>
+                                    </Disclosure>
+
+                                    {
+                                        // дизайнът за Move To бутона не е много найс. Take it or leave it.
+                                    }
+
+                                    <button
+                                        type="button"
+                                        className="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-900 bg-gray-200 border border-transparent rounded-md hover:bg-gray-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                                        onClick={() => {navigate('/boards/' + id)}}
+                                    >
+                                        Back
+                                    </button>
+
                                 </div>
                             </div>
                         </Transition.Child>

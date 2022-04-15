@@ -98,7 +98,7 @@ function AllBoards()
               </form>
 
                 <div className="flex items-center justify-center">
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 items-center justify-center justify-items-center">
                     {
                         boards.map((board, index) => (
                             <div className="flex flex-col bg-white shadow-2xl h-view rounded-md justify-center justify-items-center text-center p-5 m-3" key={index}>
