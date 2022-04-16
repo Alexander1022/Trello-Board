@@ -57,6 +57,26 @@ function AllBoards()
         const request = openDb();
         request.onsuccess = function () {
             const db = request.result;
+
+            var colStore = getObjectStore(db, "columns", "readwrite");
+            var taskStore = getObjectStore(db, "tasks", "readwrite");
+
+            var cols = colStore.getAll();
+            var tasks = taskStore.getAll();
+
+            cols.onsuccess  = function () {
+                for (let i = 0; i < cols.result.length; i++) {
+                    if (cols.result[i].data.boardId === index)
+                        colStore.delete(cols.result[i].id);                
+                }
+            }
+            tasks.onsuccess = function () {
+                for(let j = 0;  j < tasks.result.length; j++) {
+                    if(tasks.result[j].data.boardId === index)
+                        taskStore.delete(tasks.result[j].id);
+                }
+            }
+           
             getObjectStore(db, "boards", "readwrite").delete(index);
         }
 
