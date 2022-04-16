@@ -7,6 +7,7 @@ import Board from "./components/Board";
 import NicknameForm from "./components/NicknameForm";
 import EditBoard from './components/EditBoardForm';
 import EditTask from "./components/EditTask";
+import Search from "./components/Search";
 
 function App()
 {
@@ -48,6 +49,7 @@ function App()
                     <Route path="/boards/:id" element={<Board/>} />
                     <Route path="/boards/:id/edit" element={<EditBoard/>} />
                     <Route path="/boards/:id/tasks/:taskId/edit" element={<EditTask/>} />
+                    <Route path="/boards/search/:keyword" element={<Search/>} />
                 </Routes>
             </BrowserRouter>
         </div>
