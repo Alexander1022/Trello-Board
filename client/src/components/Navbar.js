@@ -32,8 +32,8 @@ function Navbar()
                       navigate(`/boards/search/${e.target.value.toLowerCase()}`)
                       e.target.value = '';
                     }
-                  }}
-                inputProps={{ style: { color: 'white'}}}
+                }}
+                inputProps={{ style: { color: 'white' }}}
                 multiline={false}
                 label="Search boards"
                 />

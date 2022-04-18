@@ -121,9 +121,9 @@ function AllBoards()
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 items-center justify-center justify-items-center">
                     {
                         boards.map((board, index) => (
-                            <div className="flex flex-col bg-white shadow-2xl h-view rounded-md justify-center justify-items-center text-center p-5 m-3" key={index}>
+                            <div className="flex flex-col bg-white shadow-2xl h-36 w-36 rounded-md justify-center justify-items-center text-center p-5 m-3" key={index}>
                                 <Link to={"/boards/" + board.id} className="">
-                                    <h1 className="font-semibold text-2xl">{board.data.name}</h1>
+                                    <h1 className="font-semibold text-2xl truncate pb-3">{board.data.name}</h1>
                                 </Link>
                                 
                                 <input className="cursor-pointer text-white bg-red-600 border-2 border-white" type="button" value="Delete" onClick={() => onDelete(board.id)} />

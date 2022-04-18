@@ -39,6 +39,11 @@ function EditTask()
         }
     }
 
+    const filterCols = (col) => {
+        if(col.data.boardId === parseInt(id)) return true;
+        return false;
+    }
+
     const getColumns = () => {
         openDb().onsuccess = (event) => {
             const db = event.target.result;
@@ -47,7 +52,7 @@ function EditTask()
             const request = objectStore.getAll();
             request.onsuccess = (event) => {
                 const cols = event.target.result;
-                setCols(cols);
+                setCols(cols.filter(filterCols));
             }
         }
     }

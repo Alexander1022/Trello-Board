@@ -59,12 +59,12 @@ function Home(props)
                 <p className="text-white text-lg">All recent tasks.</p>
             </div>
 
-            <div className="flex items-center justify-center">
+            <div className="flex bg-sky-600 items-center justify-center px-10 pb-10">
                 <div className="mt-10 transition ease-in-out duration-200 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
                 {recentTasks.map((task, index) => (
                     <div key={index} className="flex flex-col relative h-max">
                         <Link to={"/boards/" + task.data.boardId} className="group flex flex-col shadow-lg hover:shadow-2xl transition duration-200 delay-75 w-full bg-white hover:bg-gray-200 rounded-md py-6 pr-6 pl-9 lg:p-5">
-                            <p className="text-2xl font-bold text-gray-700 ease-in-out duration-200 group-hover:text-gray-700">
+                            <p className="text-2xl font-bold text-gray-700 ease-in-out duration-200 group-hover:text-gray-700 truncate">
                                 {task.data.name}
                             </p>
 
